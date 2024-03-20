@@ -4,7 +4,7 @@ RUN go install golang.org/x/tools/cmd/present@latest
 FROM alpine:3.19
 EXPOSE 3999
 COPY --from=builder /go/bin/present /usr/local/bin/present
-COPY assets/* /root/present/assets/
+COPY images/* /root/present/images/
 COPY examples/* /root/present/examples/
 COPY *.slide /root/present/
 WORKDIR /root/present
