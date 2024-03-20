@@ -1,0 +1,22 @@
+# fly.toml app configuration file generated for kubecon-cloudnativecon-europe-2024 on 2024-03-20T06:28:30+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'kubecon-cloudnativecon-europe-2024'
+primary_region = 'cdg'
+
+[build]
+
+[http_service]
+  internal_port = 3999
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

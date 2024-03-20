@@ -1,0 +1,343 @@
+# Maximizing Go's Capabilities with the WebAssembly System Interface
+21st March 2024
+Tags: wasm, wasi, wasip1
+Summary: This presentation examines the current state of WebAssembly in Go, with a focus on WASI preview 1. It delves into the history of WASI development, the ecosystem of tools, and explores real-world applications.
+
+Rajiv Ranjan Singh
+Achille Roussel
+
+## Agenda
+
+- **What is Go?**
+- **What is WebAssembly System Interface (WASI)?**
+- **History of WASI in Go**
+- **How to use wasip1?**
+- **The future of WASI in Go**
+
+.image images/1.png 300 _
+
+: We're so excited to be here with you to talk about Go and WASI.
+: We use Go every day, but we know that maybe not everyone does, so we'll start with a quick presentation on what Go is.
+: Then we'll delve into WASI and discuss a bit of the history about how WASI was added to Go.
+: We will cover a few use cases of WASI in Go applications today.
+: And finally, we want to talk a bit about ongoing development in the space, and what are the next steps for Go and WASI to continue their journey together.
+
+## Speaker - Rajiv Ranjan Singh
+
+.link https://github.com/iamrajiv
+
+- Software Engineer at **A.P. Moller - Maersk**
+- Graduated in 2022 from **JSS Academy of Technical Education, Bengaluru, India**
+- **Google Season of Docs** 2020 & 2021, **LFX Mentorship** 2021, and **Google Summer of Code** 2022
+- Previously worked with **Lummo, redBus, and Economize**
+
+: My name is Rajiv. I'm originally from Bihar, India, and currently work as a Software Engineer at A.P. Moller - Maersk in the Platform Engineering team in Bengaluru, India.
+: I graduated in 2022 from JSS Academy of Technical Education, Bengaluru, India, with a degree in Information Science and Engineering.
+: I started working with Go in 2020 when I was selected for Google Season of Docs with gRPC-Gateway.
+: I am an open-source enthusiast and have contributed to various open-source projects and programs like Google Season of Docs, LFX Mentorship, and Google Summer of Code.
+: I have previously worked with Lummo, redBus, and Economize.
+: I'm here today with Achille, do you want to tell us a bit about yourself?
+
+.image images/rajiv.png 250 _
+
+## Speaker - Achille Roussel
+
+.link https://github.com/achille-roussel
+
+- Career at **Twitch, Facebook, Segment, Twilio**
+- Go developer since 2014
+- Go contributor since 2023 (**GOOS=wasip1**)
+- Open-source maintainer on **wazero, wasi-go, wzprof...**
+- Co-Founder of [**dispatch.run**](https://docs.dispatch.run)
+
+: My name is Achille. I'm originally from France, but came here from San Francisco.
+: I've been a Go developer for almost 10 years, and I started working on the Go compiler and runtime in 2023.
+: I do a lot of open-source work, for example I contribute to Wazero and maintain serveral libraries.
+: Last year, I joined the team that develops and maintains the WebAssembly port of Go.
+: And I'm also the co-founder of dispatch.run, where we are working on a platform to create reliable distributed systems.
+
+.image images/achille.png 200 _
+
+## An open-source community journey
+
+.image images/2.gif 500 _
+
+: Rajiv and I come from very different places.
+: We actually had never met in-person before yesterday.
+: We connected online in the Go community, and thought it would be nice to come and tell the stories of Go and WebAssembly to a broader audience.
+: So, open-source is really core to the story we're here to tell.
+: Not only because Go is powered by an open-source community, but also because it's thanks to this community that the WASI port happened.
+
+## What is Go?
+
+- Multi-paradigm programming language
+- Maintained by Google as an open-source project
+
+.image images/3.png 300 _
+
+: So let's start with What is Go?
+: Go is statically typed, compiled, and garbage-collected language. The development of Go started in 2007 at Google, and it was released to the public in 2009.
+: Go is a multi-paradigm programming language oriented towards the needs of developing secure, production-quality applications.
+: It is a language developed and maintained by Google as an open-source project.
+
+## An example Go program
+
+.code examples/main.go
+
+- Simple syntax, easy to pick up
+- Memory-safe with automated memory management
+- Portable, compiles to a multitude of platforms
+
+: But, instead of telling you a long story, let me show you an example.
+: This is a full Go program that prints a hello message, as you can see it is quite simple.
+: Even if you've never looked at a Go program before, you'll be able to make sense of the code.
+: And this is a core value if Go, Go is easy to pick up.
+: Go has a rich standard library, and advanced concurrency primitives built into the language like goroutines and channels.
+: And it is also very portable, it compiles to a multitude of targets, including webassembly.
+
+## Go is more than a language
+
+The **go** program is the entrypoint to the Go toolchain.
+It standardizes how developers build and maintain their applications.
+
+```bash
+$ go build
+```
+
+```bash
+$ go mod
+```
+
+```bash
+$ go fmt
+```
+
+```bash
+$ go test
+```
+
+```bash
+$ go tool pprof
+```
+
+: The go program is the entrypoint of the Go toolchain.
+: It standardizes how developers build and maintain their applications.
+: Here I have listed a few commands that I use in my day-to-day work with Go.
+: As you can see, it provides a lot of standard tooling for building, managing dependencies, formatting and testing the code, but also some more advanced constructs like a builtin CPU and memory profiler.
+
+## Go is also an ecosystem
+
+- Many open-source projects are developed in Go
+- Large portfolio of high-quality open-source libraries
+- Alternate compilers like **TinyGo**
+- **Wazero** as embedded WASI runtime
+
+.image images/4.png 200 _
+
+: But Go is a lot more than a language, it's an ecosystem of high-quality open-source tools and libraries that largely contribute to developer productivity.
+: Beyond that, it's also a tool with a very wide breadth of applications.
+: I'm mentioning all of this because when using Go, the entire toolchain is available when compiling to WebAssembly.
+
+## The WebAssembly System Interface
+
+- WASI defines rules for Wasm programs to interact with computer resources like the file system, clock, and random data.
+
+: The WebAssembly System Interface (WASI) is a bunch of rules being worked on by a group called the WASI Subgroup. They're part of the WebAssembly Community Group and they're trying to make these rules into a standard.
+: WASI creates a set of instructions for Wasm programs. These instructions let the programs talk to the computer's resources like the file system, the clock, random data, and other stuff.
+: The latest release of the WASI spec is called wasi_snapshot_preview1, which gives us the GOOS name wasip1.
+: New versions of the API are in the works, and in the future, supporting them in the Go compiler will probably require adding a new GOOS.
+: The development of WASI has enabled various Wasm runtimes (hosts) to make their syscall instructions follow the same standards.
+: Some examples of these hosts include Wasmtime, Wazero, WasmEdge, Wasmer, and NodeJS
+: So Achille, how about you tell us how WASI was developed in Go?
+
+.image images/5.png 300 _
+
+## History of WASI Support in the Go Toolchain
+
+- WebAssembly support added in 2018 (Go 1.11)
+- WASI preview 1 target added in 2023 (Go 1.21)
+
+: Since a lot of you here are software developers familiar with WSSI, I'm sure you'll enjoy the story, in particular because you've probably lived through similar ventures before.
+: WASM support was first added to Go 1.11 that shipped in 2018.
+: But the WASI compilation target was released last year in Go 1.21.
+: This is five years and ten versions appart.
+: And that's because Go is for a big part developed by its community, and for a while, there weren't enough contributors available to work on WASI.
+: That changed in January 2023, when Johan Brandhorst, posted a message on Gopher Slack asking if anyone was interested in forming a team to work on WASI.
+
+.image images/6.png 400 _
+
+## Task #1: Learn the Craft
+
+- 4 contributors
+
+- 2 proposals
+  - **go:wasmimport**
+
+    The new compiler directive that would allow us to develop WASI
+
+  - **GOOS=wasip1**
+
+    The new target platform to implement the Go runtime on top of WASI
+
+- 1 partial implementation
+
+.image images/7.png 200 _
+
+: My friend and co-founder Julien replied to the message, and a few days later, we had a little group of 4 team members ready to pick up the WASI work.
+: Imagine the situation: we had four engineers who had never worked together on the Go compiler or runtime, and we picked up an abandonned branch that was started a few years before to add WASI, but had massively diverged from upstream.
+: Let me tell you, we weren't necessarily set on a path for success.
+: Our task was first to split out the compiler from the runtime changes so we could submit individual proposals to the Go project and deliver incremental results.
+: We submitted a first proposal to add a compiler primitive called go:wasmimport, which allows developers to declare go functions as host imports.
+: And a second proposal to add a new compilation target for WASI preview 1 that we called wasip1.
+: As a side note, we heard that more languages are adopting the term wasip1 and wasip2, I personally really enjoy this cross-language collaboration in the WebAssembly ecosystem.
+
+## Task #2: Power Through
+
+- Navigate the creativity of the open-source world.
+
+.image images/8.png 300 _
+
+: While we were going through the development of wasip1, a major challenge was dealing with the difference in interpretation of the WASI spec in various runtimes and languages.
+: We were mentioning TinyGo earlier, and for a while TinyGo was the only Go compiler with support for WASI.
+: Since TinyGo already had support for WASI, I thought to myself "great!" I could use the combination of TinyGo and Wasmtime as the reference.
+: Little did I know, the file system implementation of WASI in TinyGo was only partially completed.
+: So while we were working on getting wasip1 in "Big Go," I also took a side quest to finish the wasip1 implementation in TinyGo in order to have a reference that we could compare to.
+
+## Task #3: Deliver the Product
+
+- Changes started getting merged in
+- More contributors joined to help push through the finish line
+
+.image images/9.png 300 _
+
+: Through the perseverance of the team, after a couple of months, we had the go:wasmimport directive merged in, which we could use to implement wasip1 support in the Go runtime.
+: As we made progress on the wasip1 implementation, more developers tagged along to contribute improvements.
+: At this stage, we also started getting a lot of support from the Go team, and it really felt like we were going to pull this off.
+: Finally, the new wasip1 target went live in Go 1.21, which was released in September 2023.
+
+## Task #4: Celebrate
+
+.image images/10.png 400 _
+
+: I want to take a minute to thank all the contributors who have participated in creating the wasip1 port of Go.
+: There are too many people to fit on this slide, but if you're watching this talk, you know who you are, and know the amazing role you took in making this a reality.
+: This is truly a team effort, from people who had mostly never met in person. To me, it is a great showcase of the power of open-source.
+: Now, I'll head it over to Rajiv to tell us more about what we can do with WASI and Go.
+
+## Using the go:wasmimport directive
+
+.code examples/wasmimport.go
+
+.image images/11.png 200 _
+
+: We mentioned that the first addition was the compiler directive: go:wasmimport, and this is how we use it in Go.
+: The program declares a Go function signature without the body of the function, preceeded with the directive declaring the names of the wasm module and the exported function that it links to.
+: We can pass pointers into the linear program memory, and other primitive types, and the compiler takes care of the translation to webassembly types.
+: As you can see, this is a fairly low-level directive, only library maintainers usually care to use it, and would expose higher level APIs that invoke the imports.
+
+## Building Go program for wasip1
+
+Simple two step process:
+- go build with GOARCH=wasm and GOOS=wasip1
+- run the compiled module with a WASI runtime
+
+.code examples/main.go
+
+    $ GOARCH=wasm GOOS=wasip1 go build -o main.wasm main.go
+    $ wazero run main.wasm
+    Hello wasip1!
+
+: Now let's take a look at how we can build a Go program targeting wasip1.
+: The GOARCH and GOOS environment variables are used to control the target platform, we set them to wasm and wasip1 to build a WASI module. It doesn't get much simpler than that to build a Go program for wasip1.
+: In this program, the go:wasmimport directive is used underneath by the Go runtime to interact with the host.
+: And when we run our program with a runtime like wazero, we see our message print to the console.
+
+## Making Go plugins with wasip1
+
+- Why is WASI useful for sqlc and its plugins?
+  - Generate type-safe code from SQL queries
+  - Generic code generator written in Go
+  - Plugins targetting each language built with GOOS=wasip1
+
+: There are many applications of wasip1, I selected this one because it highlights the plugin model of WebAssembly.
+: WASI is currently primarily useful for writing plugins in any language that can be compiled to Wasm and WASI, and then executed in any language with a Wasm/WASI virtual machine.
+: There is a project called https://github.com/sqlc-dev/sqlc which generates type-safe code from SQL. In this project, they need a differential plugin to make things happen, like sqlc-gen-go, sqlc-gen-kotlin, sqlc-gen-python, etc.
+: So for every release, they extract the Go, Python, Kotlin, etc., codegen into standalone respective particular language plugins sqlc-gen-go, sqlc-gen-kotlin, sqlc-gen-python, etc., which are then built using wasip1.
+: This allows people to customize the output by forking just the particular language plugin, not the entire sqlc repository.
+: Go can be compiled both as a plugin and as a plugin runner (using Wazero, for example). In the case of sqlc, they can run plugins compiled to WASI, and then they can write their own plugins in Go and compile them to WASI.
+: The reason for using wasip1 is that it's a much smaller amount of code to change to write plugins.
+: Now I'll head it over to Achille to tell us about the qualities and limitations of wasip1.
+
+## Go wasip1 in a nutshell
+
+- **Qualities**
+  - Full language support
+  - Non-blocking I/O
+
+- **Limitations**
+  - Single threaded, all goroutines block during host function calls
+  - Limited socket support in WASI preview 1
+  - No compiler directive to declare exported functions
+
+- **Extensions**
+  - [github.com/stealthrocket/net](https://github.com/stealthrocket/net)
+
+: Go is a language with native concurrency built-in.
+: When compiling to WASI, we use non-blocking file descriptors to integrate with the Go runtime and allow concurrent operations to make progress without blocking one another.
+: This also integrates with other runtime features like timers.
+: So we get access to very powerful programming tools when using Go with WASI.
+: However, the WASM architecture used in Go is single-threaded. Although the scheduler can arrange goroutines to run concurrently, any host function calls will cause all goroutines to block until the call returns.
+: A notable absence in WASI preview 1 is a complete implementation of network sockets.
+: Which limits support for key features of the Go standard library like HTTP clients and servers.
+: However, WebAssembly runtimes such as Wasmer and WasmEdge have introduced networking extensions.
+: Although these extensions are not integrated into Go, we can use third party libraries to leverage them.
+: These libraries are also great examples of using the go:wasmimport directive to invoke host functions.
+
+## When to use Go vs TinyGo when targetting WASI?
+
+- **Go**
+  - Preferred when portability is the main priority
+
+- **TinyGo**
+  - Targets that require small binary footprint
+  - Experimental WASI features (wasip2)
+  - Compilation with wasm-unknown
+
+.image images/12.png 150 _
+
+: So now we actually have two Go compilers that can target WASI, when should we use one or the other?
+: The primary reason to use TinyGo is for the smaller binary size that it produces. If you're shipping code to a browser for example, this is something that matters a lot.
+: Another reason is that it generally implements features ahead of Big Go. For example, TinyGo had support for WASI long before Go did.
+: As a matter of fact, WASI preview 2 is already being implemented in TinyGo.
+: Now TinyGo makes some trade offs, and won't support 100% of the Go standard library or tool chain.
+: So if you need the full language and portability guarantees, this is when you should use the main Go compiler.
+
+## The future of WASI in Go
+
+Three main workstreams:
+
+- **GOARCH=wasm32**
+
+  [A new WebAssembly 32-bits architecture for Go](https://github.com/golang/go/issues/63131)
+
+- **go:wasmexport**
+
+  [To allow developers to declare custom exported functions](https://github.com/golang/go/issues/63131)
+
+- **WASI preview 2**
+
+  [TinyGo contributors are working on an experimental support for wasip2](https://github.com/tinygo-org/tinygo/pull/4027)
+
+.image images/13.png 150 _
+
+: To wrap it up, let's take a quick look at what's happening today in Go.
+: At this time, two proposals have been accepted by the Go team and are being worked on.
+: The current WebAssembly architecture in Go uses a 64-bits address space, even tho all WebAsssembly hosts assume 32-bits.
+: This hybrid model complicates interactions with the host a lot, so we're working on addressing this in a new wasm32 compilation target.
+: The second proposal we're working on intends to address one of the current limitations.
+: We're adding a go:wasmexport compiler directive that would allow developers to declare Go functions that are exported in the compiled WebAssembly module.
+: And finally, there is ongoing work to add WASI preview 2 to TinyGo, which is key to prepare for a potential wasip2 target in Go.
+: Go is becoming a big player in the WASI ecosystem, and we're always looking for more friends to help out on this journey.
+So if you're inspired and want to get involved, use wasip1, join the Gopher Slack, and come talk to us.
+
+: Thank You, and we're happy to take your questions.
