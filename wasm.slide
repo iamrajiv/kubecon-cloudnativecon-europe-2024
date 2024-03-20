@@ -8,8 +8,7 @@ Achille Roussel
 
 ## Agenda
 
-- **What is Go?**
-- **What is WebAssembly System Interface (WASI)?**
+- **What are Go and WASI?**
 - **History of WASI in Go**
 - **How to use wasip1?**
 - **The future of WASI in Go**
@@ -17,8 +16,8 @@ Achille Roussel
 .image images/1.png 300 _
 
 : We're so excited to be here with you to talk about Go and WASI.
+: We'll delve into WASI and discuss a bit of the history about how WASI was added to Go.
 : We use Go every day, but we know that maybe not everyone does, so we'll start with a quick presentation on what Go is.
-: Then we'll delve into WASI and discuss a bit of the history about how WASI was added to Go.
 : We will cover a few use cases of WASI in Go applications today.
 : And finally, we want to talk a bit about ongoing development in the space, and what are the next steps for Go and WASI to continue their journey together.
 
@@ -66,7 +65,55 @@ Achille Roussel
 : We actually had never met in-person before yesterday.
 : We connected online in the Go community, and thought it would be nice to come and tell the stories of Go and WebAssembly to a broader audience.
 : So, open-source is really core to the story we're here to tell.
-: Not only because Go is powered by an open-source community, but also because it's thanks to this community that the WASI port happened.
+: Not only because Go is powered by an open-source community, but also because it's thanks to this community that the work we are talking about today happened.
+
+## WebAssembly Architectures
+
+- Compact byte code as compilation target
+- Virtual machines do compilation at run time
+- Host functions for external communication
+
+.image images/wasm-arch.png 400 _
+
+: WebAssembly originally started as a browser technology.
+: But in recent years, standalone runtimes emerged like wazero, wasmtime, wasmer, wasmedge.
+: While these runtimes can be used as-is to run programs compiled to WebAssembly, they can also be used as libraries and embedded into existing applications.
+: This is a very powerful model.
+: For example, you can write a library in Rust, compile it to WebAssembly, and embed it in a Go application.
+: WebAssembly runtimes also offer fairly strong sandboxing, so in some case it even allows running extensions from untrusted sources.
+: However, for these capabilities to work, there needs to be common interfaces that all runtimes and compilers agree upon, and that's what the WebAssembly System Interface is.
+
+## The WebAssembly System Interface (WASI)
+
+.link https://wasi.dev/ wasi.dev
+
+- WebAssembly host functions to expose system resources
+- Current releases are preview 1 and preview 2
+
+.image images/wasi-host-call.png 400 _
+
+: So from now on, I'm going to abbreviate the WebAssembly System Interface as WASI.
+: WASI defines the ABI that compilers can target to produce WebAssembly modules.
+: And the runtimes implement WASI to provide access to system resources.
+: In a way, it makes it possible to create very lightweight containers in user-space, without assistance from the kernel.
+: For example, the host application can choose which environment variables or file system mount points are exposed to the modules.
+: There are currently two released versions of WASI called preview 1 and preview 2, that are often referred to as wasip1 and wasip2.
+: At this time, compilers that target WASI have implemented preview 1, but there is ongoing work happening to support preview 2.
+: As you can see, this is fairly bleeding edge tech, there is a lot of very active development in the space.
+
+## Why is WASI important?
+
+- Cross-compatibility between WebAssembly runtimes
+- Specification for language compilers
+- System resources are useful!
+
+.image images/wasi-interface.png 200 _
+
+: Like I was saying earlier, we need WASI because we need portable interfaces that compilers and runtimes can work with.
+: If the only supported toolchain was the combination of one compiler and one runtime, there would be no point having a standard specification.
+: Moreover, a specification for accessing system resources is important because these resources are important!
+: Programs need files, sockets, clocks, environment variables, etc... there isn't much useful software we can build without these primitives.
+: So now that we have a sense of what's WASI, and why we want it. Rajiv, let's talk a bit more about Go!
 
 ## What is Go?
 
@@ -137,20 +184,7 @@ $ go tool pprof
 : But Go is a lot more than a language, it's an ecosystem of high-quality open-source tools and libraries that largely contribute to developer productivity.
 : Beyond that, it's also a tool with a very wide breadth of applications.
 : I'm mentioning all of this because when using Go, the entire toolchain is available when compiling to WebAssembly.
-
-## The WebAssembly System Interface
-
-- WASI defines rules for Wasm programs to interact with computer resources like the file system, clock, and random data.
-
-: The WebAssembly System Interface (WASI) is a bunch of rules being worked on by a group called the WASI Subgroup. They're part of the WebAssembly Community Group and they're trying to make these rules into a standard.
-: WASI creates a set of instructions for Wasm programs. These instructions let the programs talk to the computer's resources like the file system, the clock, random data, and other stuff.
-: The latest release of the WASI spec is called wasi_snapshot_preview1, which gives us the GOOS name wasip1.
-: New versions of the API are in the works, and in the future, supporting them in the Go compiler will probably require adding a new GOOS.
-: The development of WASI has enabled various Wasm runtimes (hosts) to make their syscall instructions follow the same standards.
-: Some examples of these hosts include Wasmtime, Wazero, WasmEdge, Wasmer, and NodeJS
 : So Achille, how about you tell us how WASI was developed in Go?
-
-.image images/5.png 300 _
 
 ## History of WASI Support in the Go Toolchain
 
@@ -338,6 +372,6 @@ Three main workstreams:
 : We're adding a go:wasmexport compiler directive that would allow developers to declare Go functions that are exported in the compiled WebAssembly module.
 : And finally, there is ongoing work to add WASI preview 2 to TinyGo, which is key to prepare for a potential wasip2 target in Go.
 : Go is becoming a big player in the WASI ecosystem, and we're always looking for more friends to help out on this journey.
-So if you're inspired and want to get involved, use wasip1, join the Gopher Slack, and come talk to us.
+: So if you're inspired and want to get involved, use wasip1, join the Gopher Slack, and come talk to us.
 
 : Thank You, and we're happy to take your questions.
