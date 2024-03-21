@@ -316,9 +316,17 @@ Simple two step process:
 : WebAssembly enables the execution of code written in diverse languages within a secure environment. Its versatility allows developers to leverage existing codebases compiled to Wasm for various purposes.
 : Integrating WebAssembly into the kube-scheduler empowers users to extend its functionality through custom plugins compiled to Wasm binaries. This approach enriches Kubernetes scheduling capabilities without necessitating changes to the core scheduler implementation.
 : By embedding the WebAssembly runtime, wazero, directly into the scheduler, the process of incorporating custom plugins becomes streamlined. Configuration-based loading of these plugins further simplifies the customization process for users, fostering adaptability within Kubernetes deployments.
-: So, you can tweak your scheduler easily by just changing some settings. Load up your custom plugins hassle-free and let Kubernetes do its magic.
-: Now I'll head it over to Achille to tell us about the qualities and limitations of wasip1.
 
+: Today, extending the kube-scheduler with the Scheduling Framework is possible, but it is non-trivial.
+: Customizing the scheduler involves writing code in Go and navigating through a complicated build process.
+: Once you've developed your scheduler, there's additional deployment and configuration work required to integrate it into your cluster.
+: This is not a one-time task; it needs to be repeated with every cluster upgrade.
+
+: This project alleviates that burden by enabling the default scheduler to load custom plugins compiled to WebAssembly (wasm).
+: This eliminates the deployment challenges mentioned above.
+: Additionally, it opens up the possibility for plugins to be written in languages other than Go.
+
+: Now I'll head it over to Achille to tell us about the qualities and limitations of wasip1.
 
 ## Go wasip1 in a nutshell
 
