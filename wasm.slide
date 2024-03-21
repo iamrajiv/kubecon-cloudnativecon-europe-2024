@@ -47,10 +47,10 @@ Achille Roussel
 - Career at **Twitch, Facebook, Segment, Twilio**
 - Go developer since 2014
 - Go contributor since 2023 (**GOOS=wasip1**)
-- Open-source maintainer on **wazero, wasi-go, wzprof...**
-- Co-Founder of [**dispatch.run**](https://docs.dispatch.run)
+- Open-source maintainer on **wazero, ksuid, parquet-go...**
+- Co-Founder of [**dispatch.run**](https://dispatch.run)
 
-: My name is Achille. I'm originally from France, but came here from San Francisco.
+: My name is Achille. I'm originally from France, but I'm now based in San Francisco.
 : I've been a Go developer for almost 10 years, and I started working on the Go compiler and runtime in 2023.
 : I do a lot of open-source work, for example I contribute to Wazero and maintain serveral libraries.
 : Last year, I joined the team that develops and maintains the WebAssembly port of Go.
@@ -63,7 +63,6 @@ Achille Roussel
 .image images/2.gif 500 _
 
 : Rajiv and I come from very different places.
-: We actually had never met in-person before yesterday.
 : We connected online in the Go community, and thought it would be nice to come and tell the stories of Go and WebAssembly to a broader audience.
 : So, open-source is really core to the story we're here to tell.
 : Not only because Go is powered by an open-source community, but also because it's thanks to this community that the work we are talking about today happened.
