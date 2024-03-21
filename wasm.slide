@@ -333,9 +333,10 @@ Simple two step process:
 - **Qualities**
   - Full language support
   - Non-blocking I/O
+  - Concurrent scheduling
 
 - **Limitations**
-  - Single threaded, all goroutines block during host function calls
+  - Single threaded
   - Limited socket support in WASI preview 1
   - No compiler directive to declare exported functions
 
@@ -346,7 +347,6 @@ Simple two step process:
 : When compiling to WASI, we use non-blocking file descriptors to integrate with the Go runtime and allow concurrent operations to make progress without blocking one another.
 : This also integrates with other runtime features like timers.
 : So we get access to very powerful programming tools when using Go with WASI.
-: However, the WASM architecture used in Go is single-threaded. Although the scheduler can arrange goroutines to run concurrently, any host function calls will cause all goroutines to block until the call returns.
 : A notable absence in WASI preview 1 is a complete implementation of network sockets.
 : Which limits support for key features of the Go standard library like HTTP clients and servers.
 : However, WebAssembly runtimes such as Wasmer and WasmEdge have introduced networking extensions.
