@@ -378,15 +378,15 @@ Three main workstreams:
 
 - **GOARCH=wasm32**
 
-  [A new WebAssembly 32-bits architecture for Go](https://github.com/golang/go/issues/63131)
+  [32-bits WebAssembly architecture for Go](https://github.com/golang/go/issues/63131)
 
 - **go:wasmexport**
 
-  [To allow developers to declare custom exported functions](https://github.com/golang/go/issues/63131)
+  [Allow declaring exported functions](https://github.com/golang/go/issues/63131)
 
 - **WASI preview 2**
 
-  [TinyGo contributors are working on an experimental support for wasip2](https://github.com/tinygo-org/tinygo/pull/4027)
+  [TinyGo's experimental support for wasip2](https://github.com/tinygo-org/tinygo/pull/4027)
 
 .image images/13.png 150 _
 
