@@ -76,11 +76,13 @@ Achille Roussel
 .image images/wasm-arch.png 400 _
 
 : WebAssembly originally started as a browser technology.
-: But in recent years, standalone runtimes emerged like wazero, wasmtime, wasmer, wasmedge.
-: While these runtimes can be used as-is to run programs compiled to WebAssembly, they can also be used as libraries and embedded into existing applications.
-: This is a very powerful model.
-: For example, you can write a library in Rust, compile it to WebAssembly, and embed it in a Go application.
-: WebAssembly runtimes also offer fairly strong sandboxing, so in some case it even allows running extensions from untrusted sources.
+: It is bytecode that is executed by a virtual machine, also referred to as the host or runtime.
+: By default, WebAssembly is purely just memory and compute, but the runtime can expose functions for the guest module to import, those are called host functions.
+: In recent years, standalone runtimes emerged like wazero, wasmtime, wasmer, or wasmedge.
+: While these runtimes can be used as-is to run programs compiled to WebAssembly, they can also be embedded into existing applications.
+: And this is a very powerful model.
+: For example, you can write a plugin in Rust, compile it to WebAssembly, and embed it in a Go application.
+: WebAssembly runtimes also offer fairly strong sandboxing, so in some case it even allows running modules from untrusted sources.
 : However, for these capabilities to work, there needs to be common interfaces that all runtimes and compilers agree upon, and that's what the WebAssembly System Interface is.
 
 ## The WebAssembly System Interface (WASI)
@@ -96,10 +98,10 @@ Achille Roussel
 : WASI defines the ABI that compilers can target to produce WebAssembly modules.
 : And the runtimes implement WASI to provide access to system resources.
 : In a way, it makes it possible to create very lightweight containers in user-space, without assistance from the kernel.
-: For example, the host application can choose which environment variables or file system mount points are exposed to the modules.
+: For example, the host application can choose which environment variables or file system mount points are exposed to each instance of the modules.
 : There are currently two released versions of WASI called preview 1 and preview 2, that are often referred to as wasip1 and wasip2.
 : At this time, compilers that target WASI have implemented preview 1, but there is ongoing work happening to support preview 2.
-: As you can see, this is fairly bleeding edge tech, there is a lot of very active development in the space.
+: As you can see, this is fairly bleeding edge tech with a lot of very active development in the space.
 
 ## Why is WASI important?
 
@@ -112,7 +114,8 @@ Achille Roussel
 : Like I was saying earlier, we need WASI because we need portable interfaces that compilers and runtimes can work with.
 : If the only supported toolchain was the combination of one compiler and one runtime, there would be no point having a standard specification.
 : Moreover, a specification for accessing system resources is important because these resources are important!
-: Programs need files, sockets, clocks, environment variables, etc... I mean, there isn't much useful software we can build without these primitives.
+: Programs need files, sockets, clocks, environment variables.
+: I mean, I don't know about you, but I find there isn't much useful software we can build without these primitives.
 : So now that we have a sense of what's WASI, and why we need it. Rajiv, let's talk a bit more about Go.
 
 ## What is Go?
@@ -191,12 +194,12 @@ $ go tool pprof
 - WebAssembly support added in 2018 (Go 1.11)
 - WASI preview 1 target added in 2023 (Go 1.21)
 
-: Since a lot of you here are software developers familiar with WASI, I'm sure you'll enjoy the story, in particular because you've probably lived through similar ventures before.
+: Since a lot of you here are software developers, I'm sure you'll enjoy the story, in particular because you've probably lived through similar ventures before.
 : WASM support was first added to Go 1.11 that shipped in 2018.
 : But the WASI compilation target was released last year in Go 1.21.
 : This is five years and ten versions appart.
 : And that's because Go is for a big part developed by its community, and for a while, there weren't enough contributors available to work on WASI.
-: That changed in January 2023, when Johan Brandhorst, posted a message on Gopher Slack asking if anyone was interested in forming a team to work on WASI.
+: That changed in January 2023, when Johan Brandhorst, posted a message on Gopher Slack asking if anyone was interested in forming a team to maintain the WebAssembly port of Go.
 
 .image images/6.png 400 _
 
@@ -217,7 +220,7 @@ $ go tool pprof
 
 .image images/7.png 200 _
 
-: My friend and co-founder Julien replied to the message, and a few days later, we had a little group of 4 team members ready to pick up the WASI work.
+: My friend and co-founder Julien replied to the message, and a few days later, we had a little group of 4 team members ready to pick up the work.
 : Imagine the situation: we had four engineers who had never worked together on the Go compiler or runtime, and we picked up an abandonned branch that was started a few years before to add WASI, but had massively diverged from upstream.
 : Let me tell you, we weren't necessarily set on a path for success.
 : Our task was first to split out the compiler from the runtime changes so we could submit individual proposals to the Go project and deliver incremental results.
@@ -232,8 +235,8 @@ $ go tool pprof
 .image images/8.png 300 _
 
 : While we were going through the development of wasip1, a major challenge was dealing with the difference in interpretation of the WASI spec in various runtimes and languages.
-: We were mentioning TinyGo earlier, and for a while TinyGo was the only Go compiler with support for WASI.
-: Since TinyGo already had support for WASI, I thought to myself "great!" I could use the combination of TinyGo and Wasmtime as the reference.
+: The alternative compiler TinyGo which is built on LLVM, had supported WASI for a few years already.
+: Since TinyGo already supported it, I thought "great!" I could use the combination of TinyGo and Wasmtime as the reference.
 : Little did I know, the file system implementation of WASI in TinyGo was only partially completed.
 : So while we were working on getting wasip1 in "Big Go," I also took a side quest to finish the wasip1 implementation in TinyGo in order to have a reference that we could compare to.
 
@@ -255,7 +258,7 @@ $ go tool pprof
 
 : I want to take a minute to thank all the contributors who have participated in creating the wasip1 port of Go.
 : There are too many people to fit on this slide, but if you're watching this talk, you know who you are, and know the amazing role you took in making this a reality.
-: This is truly a team effort, from people who had mostly never met in person. To me, it is a great showcase of the power of open-source.
+: This is truly a team effort, from people who had mostly never met in person. To me, it is a great showcase of the power of open-source communities.
 : Now, I'll head it over to Rajiv to tell us more about what we can do with WASI and Go.
 
 ## Using the go:wasmimport directive
