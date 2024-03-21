@@ -112,8 +112,8 @@ Achille Roussel
 : Like I was saying earlier, we need WASI because we need portable interfaces that compilers and runtimes can work with.
 : If the only supported toolchain was the combination of one compiler and one runtime, there would be no point having a standard specification.
 : Moreover, a specification for accessing system resources is important because these resources are important!
-: Programs need files, sockets, clocks, environment variables, etc... there isn't much useful software we can build without these primitives.
-: So now that we have a sense of what's WASI, and why we want it. Rajiv, let's talk a bit more about Go!
+: Programs need files, sockets, clocks, environment variables, etc... I mean, there isn't much useful software we can build without these primitives.
+: So now that we have a sense of what's WASI, and why we need it. Rajiv, let's talk a bit more about Go.
 
 ## What is Go?
 
