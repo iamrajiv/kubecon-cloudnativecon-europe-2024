@@ -17,7 +17,8 @@ Achille Roussel
 
 : We're so excited to be here with you to talk about Go and WASI.
 : We'll delve into WASI and discuss a bit of the history about how WASI was added to Go.
-: We use Go every day, but we know that maybe not everyone does, so we'll start with a quick presentation on what Go is.
+: We will start the presentation with WebAssembly Architectures and the WebAssembly System Interface.
+: We will then talk about Go and its ecosystem, and how WASI fits into the picture.
 : We will cover a few use cases of WASI in Go applications today.
 : And finally, we want to talk a bit about ongoing development in the space, and what are the next steps for Go and WASI to continue their journey together.
 
@@ -191,7 +192,7 @@ $ go tool pprof
 - WebAssembly support added in 2018 (Go 1.11)
 - WASI preview 1 target added in 2023 (Go 1.21)
 
-: Since a lot of you here are software developers familiar with WSSI, I'm sure you'll enjoy the story, in particular because you've probably lived through similar ventures before.
+: Since a lot of you here are software developers familiar with WASI, I'm sure you'll enjoy the story, in particular because you've probably lived through similar ventures before.
 : WASM support was first added to Go 1.11 that shipped in 2018.
 : But the WASI compilation target was released last year in Go 1.21.
 : This is five years and ten versions appart.
@@ -294,13 +295,28 @@ Simple two step process:
   - Plugins targetting each language built with GOOS=wasip1
 
 : There are many applications of wasip1, I selected this one because it highlights the plugin model of WebAssembly.
-: WASI is currently primarily useful for writing plugins in any language that can be compiled to Wasm and WASI, and then executed in any language with a Wasm/WASI virtual machine.
+: So, WASI is currently primarily useful for writing plugins in any language that can be compiled to Wasm and WASI, and then executed in any language with a Wasm/WASI virtual machine.
+
 : There is a project called https://github.com/sqlc-dev/sqlc which generates type-safe code from SQL. In this project, they need a differential plugin to make things happen, like sqlc-gen-go, sqlc-gen-kotlin, sqlc-gen-python, etc.
 : So for every release, they extract the Go, Python, Kotlin, etc., codegen into standalone respective particular language plugins sqlc-gen-go, sqlc-gen-kotlin, sqlc-gen-python, etc., which are then built using wasip1.
 : This allows people to customize the output by forking just the particular language plugin, not the entire sqlc repository.
 : Go can be compiled both as a plugin and as a plugin runner (using Wazero, for example). In the case of sqlc, they can run plugins compiled to WASI, and then they can write their own plugins in Go and compile them to WASI.
 : The reason for using wasip1 is that it's a much smaller amount of code to change to write plugins.
+
+## Kube Scheduler Wasm Extension
+
+- WebAssembly for Multi-language Compatibility
+- Enhanced Kubernetes Scheduler
+- Seamless Integration via Runtime Embedding
+
+.image images/wasi-k8s.png 400 _
+
+: WebAssembly enables the execution of code written in diverse languages within a secure environment. Its versatility allows developers to leverage existing codebases compiled to Wasm for various purposes.
+: Integrating WebAssembly into the kube-scheduler empowers users to extend its functionality through custom plugins compiled to Wasm binaries. This approach enriches Kubernetes scheduling capabilities without necessitating changes to the core scheduler implementation.
+: By embedding the WebAssembly runtime, wazero, directly into the scheduler, the process of incorporating custom plugins becomes streamlined. Configuration-based loading of these plugins further simplifies the customization process for users, fostering adaptability within Kubernetes deployments.
+: So, you can tweak your scheduler easily by just changing some settings. Load up your custom plugins hassle-free and let Kubernetes do its magic.
 : Now I'll head it over to Achille to tell us about the qualities and limitations of wasip1.
+
 
 ## Go wasip1 in a nutshell
 
