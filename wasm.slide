@@ -100,8 +100,8 @@ Achille Roussel
 : In a way, it makes it possible to create very lightweight containers in user-space, without assistance from the kernel.
 : For example, the host application can choose which environment variables or file system mount points are exposed to each instance of the modules.
 : There are currently two released versions of WASI called preview 1 and preview 2, that are often referred to as wasip1 and wasip2.
-: At this time, compilers that target WASI have implemented preview 1, but there is ongoing work happening to support preview 2.
-: As you can see, this is fairly bleeding edge tech with a lot of very active development in the space.
+: At this time, compilers that target WASI have mostly implemented preview 1.
+: We're talking about fairly bleeding edge tech with a lot of active development in the space.
 
 ## Why is WASI important?
 
