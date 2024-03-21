@@ -368,7 +368,6 @@ Simple two step process:
 : So now we actually have two Go compilers that can target WASI, when should we use one or the other?
 : The primary reason to use TinyGo is for the smaller binary size that it produces. If you're shipping code to a browser for example, this is something that matters a lot.
 : Another reason is that it generally implements features ahead of Big Go. For example, TinyGo had support for WASI long before Go did.
-: As a matter of fact, WASI preview 2 is already being implemented in TinyGo.
 : Now TinyGo makes some trade offs, and won't support 100% of the Go standard library or tool chain.
 : So if you need the portability guarantees, this is when you should use the main Go compiler.
 
