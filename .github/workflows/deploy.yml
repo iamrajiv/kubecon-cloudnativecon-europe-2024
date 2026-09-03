@@ -4,8 +4,9 @@
 # once with Go present and published with present's own stylesheet and scripts,
 # a package.json is built with Slidev through pnpm, and anything else is published
 # as the exported HTML it already is, with slides.html serving as the index when
-# no index.html exists. The result is served at iamrajiv.github.io/<repository name>/
-# and the first run enables GitHub Pages for the repository by itself.
+# no index.html exists. The result is served at iamrajiv.github.io/<repository name>/.
+# GitHub Pages must be switched on once per repository, in Settings > Pages, with
+# the source set to GitHub Actions; the workflow token is not allowed to do that.
 
 name: deploy
 
@@ -78,11 +79,9 @@ jobs:
         run: |
           mkdir -p dist
           rsync -a --exclude .git --exclude .github --exclude dist ./ dist/
-          if [ ! -f dist/index.html ]; then cp dist/slides.html dist/index.html; fi
+          if [ ! -f dist/index.html ] && [ -f dist/slides.html ]; then cp dist/slides.html dist/index.html; fi
 
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: dist
