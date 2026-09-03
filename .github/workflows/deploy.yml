@@ -4,7 +4,10 @@
 # once with Go present and published with present's own stylesheet and scripts,
 # a package.json is built with Slidev through pnpm, and anything else is published
 # as the exported HTML it already is, with slides.html serving as the index when
-# no index.html exists. The result is served at iamrajiv.github.io/<repository name>/.
+# no index.html exists. For present and HTML decks the page title, description and
+# Open Graph title and description are set from the repository's About description,
+# or from the repository name when About is empty; the Slidev deck declares its own.
+# The result is served at iamrajiv.github.io/<repository name>/.
 # GitHub Pages must be switched on once per repository, in Settings > Pages, with
 # the source set to GitHub Actions; the workflow token is not allowed to do that.
 
@@ -80,6 +83,28 @@ jobs:
           mkdir -p dist
           rsync -a --exclude .git --exclude .github --exclude dist ./ dist/
           if [ ! -f dist/index.html ] && [ -f dist/slides.html ]; then cp dist/slides.html dist/index.html; fi
+
+      - if: steps.deck.outputs.type != 'slidev'
+        run: |
+          python3 - <<'PY'
+          import html, os, re
+          text = html.escape(os.environ["ABOUT"] or os.environ["REPO"], quote=True)
+          url = "https://iamrajiv.github.io/" + os.environ["REPO"] + "/"
+          path = "dist/index.html"
+          page = open(path, encoding="utf-8").read()
+          page = re.sub(r"<title>[^<]*</title>", "", page, count=1)
+          page = re.sub(r'<meta name="description"[^>]*>', "", page)
+          tags = (f'<title>{text}</title>'
+                  f'<meta name="description" content="{text}">'
+                  f'<meta name="author" content="Rajiv Ranjan Singh">'
+                  f'<meta property="og:title" content="{text}">'
+                  f'<meta property="og:description" content="{text}">'
+                  f'<meta property="og:url" content="{url}">')
+          open(path, "w", encoding="utf-8").write(page.replace("</head>", tags + "</head>", 1))
+          PY
+        env:
+          ABOUT: ${{ github.event.repository.description }}
+          REPO: ${{ github.event.repository.name }}
 
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
